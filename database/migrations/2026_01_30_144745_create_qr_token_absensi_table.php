@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('qr_token_absensi', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('sesi_absensi_id');
+            $table->string('token');
+            $table->timestamp('expired_at');
+            $table->timestamps();
+
+            $table->foreign('sesi_absensi_id')->references('id')->on('sesi_absensi')->cascadeOnDelete();
+        });
+
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('qr_token_absensi');
+    }
+};

@@ -4,24 +4,28 @@ namespace App\Helpers;
 
 class GeoHelper
 {
-    public static function distanceMeter($lat1, $lon1, $lat2, $lon2)
-    {
+    public static function distanceMeter(
+        float $lat1,
+        float $lng1,
+        float $lat2,
+        float $lng2
+    ): float {
         $earthRadius = 6371000; // meter
 
-        $latFrom = deg2rad($lat1);
-        $lonFrom = deg2rad($lon1);
-        $latTo   = deg2rad($lat2);
-        $lonTo   = deg2rad($lon2);
+        $lat1 = deg2rad($lat1);
+        $lng1 = deg2rad($lng1);
+        $lat2 = deg2rad($lat2);
+        $lng2 = deg2rad($lng2);
 
-        $latDelta = $latTo - $latFrom;
-        $lonDelta = $lonTo - $lonFrom;
+        $dLat = $lat2 - $lat1;
+        $dLng = $lng2 - $lng1;
 
-        $angle = 2 * asin(sqrt(
-            pow(sin($latDelta / 2), 2) +
-            cos($latFrom) * cos($latTo) *
-            pow(sin($lonDelta / 2), 2)
-        ));
+        $a = sin($dLat / 2) ** 2 +
+             cos($lat1) * cos($lat2) *
+             sin($dLng / 2) ** 2;
 
-        return $angle * $earthRadius;
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 }

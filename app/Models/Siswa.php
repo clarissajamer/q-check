@@ -26,4 +26,11 @@ class Siswa extends Model
     {
         return $this->hasMany(AbsensiEskul::class);
     }
+
+    public function eskuls()
+    {
+        return $this->belongsToMany(Eskul::class, 'anggota_eskul', )
+                    ->withPivot('tahun_ajaran_id', 'status')
+                    ->withTimestamps();
+    }
 }

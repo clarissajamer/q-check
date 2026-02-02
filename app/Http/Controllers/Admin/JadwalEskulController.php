@@ -21,14 +21,14 @@ class JadwalEskulController extends Controller
 
     public function create()
     {
-        $eskuls = Eskul::orderBy('nama')->get();
+        $eskuls = Eskul::orderBy('nama_eskul')->get();
         return view('admin.jadwal_eskul.create', compact('eskuls'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'eskul_id'     => 'required|exists:eskuls,id',
+            'eskul_id'     => 'required|exists:eskul,id',
             'tanggal'      => 'required|date',
             'jam_mulai'    => 'required',
             'jam_selesai'  => 'required|after:jam_mulai',
@@ -56,14 +56,14 @@ class JadwalEskulController extends Controller
 
     public function edit(JadwalEskul $jadwalEskul)
     {
-        $eskuls = Eskul::orderBy('nama')->get();
+        $eskuls = Eskul::orderBy('nama_eskul')->get();
         return view('admin.jadwal_eskul.edit', compact('jadwalEskul', 'eskuls'));
     }
 
     public function update(Request $request, JadwalEskul $jadwalEskul)
     {
         $request->validate([
-            'eskul_id'     => 'required|exists:eskuls,id',
+            'eskul_id'     => 'required|exists:eskul,id',
             'tanggal'      => 'required|date',
             'jam_mulai'    => 'required',
             'jam_selesai'  => 'required|after:jam_mulai',

@@ -30,15 +30,20 @@ class EskulController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'kategori_id' => 'required|uuid',
-            'tahun_ajaran_id' => 'required|uuid',
+            'nama_eskul' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategori_eskul,id',
+            'tahun_ajaran_id' => 'required|exists:tahun_ajaran,id',
         ]);
 
-        Eskul::create($request->all());
+        Eskul::create([
+            'nama_eskul' => $request->nama_eskul,
+            'kategori_id' => $request->kategori_id,
+            'tahun_ajaran_id' => $request->tahun_ajaran_id,
+            'status' => 'aktif', // Default status
+        ]);
 
         return redirect()
-            ->route('eskul.index')
+            ->route('admin.eskul.index')
             ->with('success', 'Eskul berhasil dibuat');
     }
 
@@ -54,15 +59,15 @@ class EskulController extends Controller
     public function update(Request $request, Eskul $eskul)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'kategori_id' => 'required|uuid',
-            'tahun_ajaran_id' => 'required|uuid',
+            'nama_eskul' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategori_eskul,id',
+            'tahun_ajaran_id' => 'required|exists:tahun_ajaran,id',
         ]);
 
         $eskul->update($request->all());
 
         return redirect()
-            ->route('eskul.index')
+            ->route('admin.eskul.index')
             ->with('success', 'Eskul berhasil diupdate');
     }
 
@@ -72,13 +77,4 @@ class EskulController extends Controller
 
         return back()->with('success', 'Eskul dihapus');
     }
-//     public function dashboard()
-// {
-//     return view('admin.dashboard', [
-//         'totalEskul' => Eskul::count(),
-//         'jadwalHariIni' => JadwalEskul::whereDate('tanggal', now())->count(),
-//         'absensiAktif' => SesiAbsensi::where('status','dibuka')->exists(),
-//     ]);
-// }
-
 }

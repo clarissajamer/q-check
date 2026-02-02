@@ -3,11 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class KategoriEskul extends Model
 {
-    use HasUuids;
+    // Removed HasUuids to default to auto-incrementing integer
 
     protected $table = 'kategori_eskul';
     protected $guarded = [];

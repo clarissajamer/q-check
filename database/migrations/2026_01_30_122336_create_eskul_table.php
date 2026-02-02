@@ -13,11 +13,12 @@ return new class extends Migration {
         Schema::create('eskul', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama_eskul');
-            $table->uuid('kategori_id');
+            $table->foreignId('kategori_id')->constrained('kategori_eskul');
             $table->uuid('tahun_ajaran_id');
             $table->enum('status', ['aktif', 'nonaktif']);
             $table->timestamps();
-            $table->foreign('kategori_id')->references('id')->on('kategori_eskul');
+            
+            // Note: tahun_ajaran still uses UUID based on other migrations not being changed, keeping minimal changes scope
             $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajaran');
         });
 

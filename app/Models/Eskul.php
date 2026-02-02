@@ -31,4 +31,10 @@ class Eskul extends Model
     {
         return $this->hasMany(JadwalEskul::class);
     }
+    public function siswa()
+    {
+        return $this->belongsToMany(Siswa::class, 'anggota_eskul', )
+                    ->withPivot('tahun_ajaran_id', 'status')
+                    ->withTimestamps();
+    }
 }

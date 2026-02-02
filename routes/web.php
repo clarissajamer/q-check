@@ -6,7 +6,10 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EskulController;
 use App\Http\Controllers\Admin\JadwalEskulController;
 use App\Http\Controllers\Admin\SesiAbsensiController;
+use App\Http\Controllers\Admin\KategoriEskulController;
+use App\Http\Controllers\Admin\TahunAjaranController;
 use App\Http\Controllers\Siswa\AbsensiController;
+use App\Http\Controllers\Siswa\SiswaDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,10 +37,19 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::resource('jadwal-eskul', JadwalEskulController::class);
 
+        Route::resource('kategori-eskul', KategoriEskulController::class);
+
+        Route::resource('tahun-ajaran', TahunAjaranController::class);
+
         Route::post(
             'jadwal-eskul/{jadwal}/buka-absensi',
-            [SesiAbsensiController::class, 'store']
+            [SesiAbsensiController::class, 'buka']
         )->name('jadwal-eskul.buka-absensi');
+
+        Route::get(
+            'sesi-absensi/{sesi}/qr',
+            [SesiAbsensiController::class, 'qr']
+        )->name('sesi-absensi.qr');
 
         Route::post(
             'sesi-absensi/{sesi}/tutup',
@@ -68,7 +80,7 @@ Route::middleware(['auth', 'role:siswa'])
     ->name('siswa.')
     ->group(function () {
 
-        Route::get('/dashboard', fn () => view('siswa.dashboard'))
+        Route::get('/dashboard', [SiswaDashboardController::class, 'index'])
             ->name('dashboard');
 
         Route::post('/absen', [AbsensiController::class, 'absen'])

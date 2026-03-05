@@ -3,41 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class AbsensiEskul extends Model
 {
-    use HasFactory;
+    use HasUuids; // Karena tabel kamu pakai UUID
 
     protected $table = 'absensi_eskul';
-    protected $keyType = 'string';
-    public $incrementing = false;
 
+    // WAJIB: Tambahkan 'waktu_scan' ke daftar ini agar tidak diblokir Laravel
     protected $fillable = [
+        'id',
         'sesi_absensi_id',
         'siswa_id',
-        'latitude',
-        'longitude',
         'status',
+        'waktu_scan', 
     ];
-
-    protected static function booted()
-    {
-        static::creating(function ($model) {
-            $model->id = (string) Str::uuid();
-        });
-    }
-
-    /* ========= RELATION ========= */
-
-    public function sesi()
-    {
-        return $this->belongsTo(SesiAbsensi::class, 'sesi_absensi_id');
-    }
-
-    public function siswa()
-    {
-        return $this->belongsTo(Siswa::class);
-    }
 }

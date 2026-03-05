@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->uuid('sesi_absensi_id');
             $table->uuid('siswa_id');
-            $table->enum('status', ['Hadir', 'Sakit', 'Izin']);
+            $table->enum('status', ['hadir', 'sakit', 'izin']);
             $table->timestamp('waktu_scan');
             $table->timestamps();
 

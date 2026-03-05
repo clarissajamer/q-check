@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class SesiAbsensi extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $table = 'sesi_absensi';
     protected $keyType = 'string';
@@ -32,6 +33,11 @@ class SesiAbsensi extends Model
     public function pembuka()
     {
         return $this->belongsTo(User::class, 'dibuka_oleh');
+    }
+
+    public function qrToken()
+    {
+        return $this->hasMany(QrTokenAbsensi::class, 'sesi_absensi_id');
     }
 }
         

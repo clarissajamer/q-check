@@ -10,27 +10,40 @@ class Siswa extends Model
     use HasUuids;
 
     protected $table = 'siswa';
-    protected $guarded = [];
+
+    // Gunakan $fillable saja untuk keamanan, hapus $guarded = [] agar tidak konflik
+    protected $fillable = [
+        'user_id',
+        'nama',
+        'nis',
+        'tahun_ajaran_id',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function tahunAjaran()
     {
-        return $this->hasMany(SiswaTahunAjaran::class);
+        return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran_id');
     }
 
     public function anggotaEskul()
     {
-        return $this->hasMany(AnggotaEskul::class);
+        return $this->hasMany(AnggotaEskul::class, 'siswa_id');
     }
 
     public function absensi()
     {
-        return $this->hasMany(AbsensiEskul::class);
+        return $this->hasMany(AbsensiEskul::class, 'siswa_id');
     }
 
-    public function eskuls()
+    // Ini relasi Many-to-Many yang BENAR menuju tabel anggota_eskul
+    public function eskul()
     {
-        return $this->belongsToMany(Eskul::class, 'anggota_eskul', )
-                    ->withPivot('tahun_ajaran_id', 'status')
+        return $this->belongsToMany(Eskul::class, 'anggota_eskul', 'siswa_id', 'eskul_id')
+                    ->withPivot('id', 'tahun_ajaran_id', 'status')
                     ->withTimestamps();
     }
 }

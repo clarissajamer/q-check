@@ -30,7 +30,7 @@
                     @forelse ($jadwals as $jadwal)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-bold text-gray-900">{{ $jadwal->eskul->nama }}</div>
+                            <div class="text-sm font-bold text-gray-900">{{ $jadwal->eskul->nama_eskul }}</div>
                             <div class="text-xs text-gray-500">{{ ucfirst($jadwal->hari) }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -53,21 +53,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                            <!-- Tombol Buka Absensi -->
-                            @if($jadwal->status === 'aktif')
-                                @if($jadwal->sesiAbsensi()->where('status', 'aktif')->exists())
-                                    <a href="{{ route('admin.sesi-absensi.qr', $jadwal->sesiAbsensi()->where('status', 'aktif')->first()->id) }}" class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors">
-                                        Lihat QR
-                                    </a>
-                                @else
-                                    <form action="{{ route('admin.jadwal-eskul.buka-absensi', $jadwal->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        <button type="submit" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md transition-colors">
-                                            Buka Absensi
-                                        </button>
-                                    </form>
-                                @endif
-                            @endif
+
 
                             <a href="{{ route('admin.jadwal-eskul.edit', $jadwal->id) }}" class="text-yellow-600 hover:text-yellow-900 bg-yellow-50 hover:bg-yellow-100 px-3 py-1 rounded-md transition-colors">Edit</a>
                             

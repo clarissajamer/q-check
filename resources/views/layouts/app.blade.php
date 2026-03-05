@@ -75,7 +75,27 @@
                         Dashboard
                     </a>
 
-                    <!-- Kegiatan Dropdown -->
+                    <!-- User Management Dropdown -->
+                    <div x-data="{ expanded: {{ request()->routeIs('admin.users*') ? 'true' : 'false' }} }">
+                        <button @click="expanded = !expanded" class="flex w-full items-center justify-between px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-primary-600 focus:outline-none transition-colors duration-200">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                <span>Manajemen User</span>
+                            </div>
+                            <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="expanded" x-collapse style="display: none;" class="pl-12 pr-2 space-y-1 mt-1">
+                             <a href="{{ route('admin.users.index', 'admin') }}" class="block px-3 py-2 rounded-md {{ request()->is('admin/users/admin*') ? 'text-primary-600 font-medium bg-primary-50' : 'text-sm text-gray-500 hover:text-primary-600 hover:bg-gray-50' }}">
+                                Data Admin
+                            </a>
+                             <a href="{{ route('admin.users.index', 'guru') }}" class="block px-3 py-2 rounded-md {{ request()->is('admin/users/guru*') ? 'text-primary-600 font-medium bg-primary-50' : 'text-sm text-gray-500 hover:text-primary-600 hover:bg-gray-50' }}">
+                                Data Guru
+                            </a>
+                             <a href="{{ route('admin.users.index', 'siswa') }}" class="block px-3 py-2 rounded-md {{ request()->is('admin/users/siswa*') ? 'text-primary-600 font-medium bg-primary-50' : 'text-sm text-gray-500 hover:text-primary-600 hover:bg-gray-50' }}">
+                                Data Siswa
+                            </a>
+                        </div>
+                    </div>
                     <div x-data="{ expanded: {{ (request()->routeIs('admin.eskul*') || request()->routeIs('admin.jadwal-eskul*') || request()->routeIs('admin.kategori-eskul*')) ? 'true' : 'false' }} }">
                         <button @click="expanded = !expanded" class="flex w-full items-center justify-between px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-primary-600 focus:outline-none transition-colors duration-200">
                             <div class="flex items-center">

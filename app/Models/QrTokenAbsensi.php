@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class QrTokenAbsensi extends Model
 {
     use HasUuids;
-
     protected $table = 'qr_token_absensi';
     protected $guarded = [];
+
+    // TAMBAHKAN INI:
+    protected $casts = [
+        'expired_at' => 'datetime',
+    ];
 
     public function sesi()
     {

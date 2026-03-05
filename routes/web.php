@@ -9,7 +9,10 @@ use App\Http\Controllers\Admin\SesiAbsensiController;
 use App\Http\Controllers\Admin\KategoriEskulController;
 use App\Http\Controllers\Admin\TahunAjaranController;
 use App\Http\Controllers\Siswa\AbsensiController;
-use App\Http\Controllers\Siswa\SiswaDashboardController;
+// Imports for Guru Controllers
+use App\Http\Controllers\Guru\JadwalEskulController as GuruJadwalController;
+use App\Http\Controllers\Guru\SesiAbsensiController as GuruSesiController;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,20 +44,22 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::resource('tahun-ajaran', TahunAjaranController::class);
 
-        Route::post(
-            'jadwal-eskul/{jadwal}/buka-absensi',
-            [SesiAbsensiController::class, 'buka']
-        )->name('jadwal-eskul.buka-absensi');
-
-        Route::get(
-            'sesi-absensi/{sesi}/qr',
-            [SesiAbsensiController::class, 'qr']
-        )->name('sesi-absensi.qr');
-
-        Route::post(
-            'sesi-absensi/{sesi}/tutup',
-            [SesiAbsensiController::class, 'tutup']
-        )->name('sesi-absensi.tutup');
+        // User Management Routes
+        Route::prefix('users')->name('users.')->group(function () {
+            // Index & Create with role parameter
+            Route::get('{role}', [UserController::class, 'index'])
+                ->where('role', 'admin|guru|siswa')
+                ->name('index');
+            Route::get('{role}/create', [UserController::class, 'create'])
+                ->where('role', 'admin|guru|siswa')
+                ->name('create');
+            
+            // Store, Update, Destroy (standard resource actions, but custom handled)
+            Route::post('/', [UserController::class, 'store'])->name('store');
+            Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::put('{user}', [UserController::class, 'update'])->name('update');
+            Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+        });
     });
 
 /*
@@ -68,6 +73,14 @@ Route::middleware(['auth', 'role:guru'])
     ->group(function () {
         Route::get('/dashboard', fn () => view('guru.dashboard'))
             ->name('dashboard');
+
+        // Jadwal Eskul List
+        Route::get('/jadwal', [GuruJadwalController::class, 'index'])->name('jadwal.index');
+
+        // Sesi Absensi & QR
+        Route::post('/jadwal/{jadwal}/buka-absensi', [GuruSesiController::class, 'buka'])->name('jadwal-eskul.buka-absensi');
+        Route::get('/sesi/{sesi}/qr', [GuruSesiController::class, 'qr'])->name('sesi-absensi.qr');
+        Route::post('/sesi/{sesi}/tutup', [GuruSesiController::class, 'tutup'])->name('sesi-absensi.tutup');
     });
 
 /*

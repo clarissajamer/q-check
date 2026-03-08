@@ -33,10 +33,14 @@ class Eskul extends Model
     }
     public function siswa()
     {
-        return $this->belongsToMany(Siswa::class, 'anggota_eskul','eskul_id' ,'siswa_id'  )
-                    ->withPivot('tahun_ajaran_id', 'status')
-                    ->withTimestamps();
+        return $this->belongsToMany(Siswa::class, 'anggota_eskul', 'eskul_id', 'siswa_id')
+            ->withPivot('tahun_ajaran_id', 'status')
+            ->withTimestamps();
 
+    }
+    public function anggotaEskul()
+    {
+        return $this->hasMany(\App\Models\AnggotaEskul::class, 'eskul_id');
     }
 
 }

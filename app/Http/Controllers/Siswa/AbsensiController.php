@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Siswa;
 use App\Http\Controllers\Controller;
 use App\Models\SesiAbsensi;
 use App\Models\AbsensiEskul;
+use App\Models\Siswa;
 use App\Helpers\GeoHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ class AbsensiController extends Controller
             'longitude' => 'required|numeric',
         ]);
 
-        $sesi = SesiAbsensi::with('jadwalEskul')
+        $sesi = SesiAbsensi::with('jadwal')
             ->where('id', $request->sesi_absensi_id)
             ->where('status', 'aktif')
             ->first();
@@ -50,9 +51,11 @@ class AbsensiController extends Controller
             );
         }
 
+        $siswa = Siswa::where('user_id', Auth::id())->firstOrFail();
+
         // cegah double absen
         $sudahAbsen = AbsensiEskul::where('sesi_absensi_id', $sesi->id)
-            ->where('siswa_id', Auth::id())
+            ->where('siswa_id', $siswa->id)
             ->exists();
 
         if ($sudahAbsen) {
@@ -62,7 +65,7 @@ class AbsensiController extends Controller
         AbsensiEskul::create([
             'id' => (string) Str::uuid(),
             'sesi_absensi_id' => $sesi->id,
-            'siswa_id' => Auth::id(),
+            'siswa_id' => $siswa->id,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'jarak_meter' => round($jarak),

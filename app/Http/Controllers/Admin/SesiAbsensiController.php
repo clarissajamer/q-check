@@ -16,8 +16,8 @@ class SesiAbsensiController extends Controller
     {
         $sekarang = Carbon::now();
 
-        $mulai   = Carbon::parse($jadwal->jam_mulai);
-        $selesai = Carbon::parse($jadwal->jam_selesai);
+        $mulai   = Carbon::parse($jadwal->tanggal . ' ' . $jadwal->jam_mulai);
+        $selesai = Carbon::parse($jadwal->tanggal . ' ' . $jadwal->jam_selesai);
 
         // 1️⃣ cek jadwal belum mulai
         if ($sekarang->lt($mulai)) {
@@ -38,6 +38,8 @@ class SesiAbsensiController extends Controller
         $sesi = SesiAbsensi::create([
             'jadwal_eskul_id' => $jadwal->id,
             'mulai_absen'     => now(),
+            'opened_lat'      => $jadwal->latitude,
+            'opened_lng'      => $jadwal->longitude,
             'dibuka_oleh'     => Auth::id(),
             'status'          => 'aktif',
         ]);

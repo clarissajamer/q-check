@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Siswa;
 
+use App;
 use App\Http\Controllers\Controller;
 use App\Models\QrTokenAbsensi;
 use App\Models\AbsensiEskul;
@@ -10,14 +11,15 @@ use App\Helpers\GeoHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\AnggotaEskul;
 
 class ScanQrController extends Controller
 {
     public function scan(Request $request)
     {
         $request->validate([
-            'token'     => 'required',
-            'latitude'  => 'required|numeric',
+            'token' => 'required',
+            'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
         ]);
 
@@ -33,31 +35,54 @@ class ScanQrController extends Controller
         $sesi = $qr->sesi;
         $jadwal = $sesi->jadwal;
 
+
         // 2️⃣ Ambil siswa
         $siswa = Siswa::where('user_id', Auth::id())->firstOrFail();
 
-        // 3️⃣ Hitung jarak
+        // 🔒 Cek apakah siswa anggota ekskul ini
+        $anggota = AnggotaEskul::where('siswa_id', $siswa->id)
+            ->where('eskul_id', $jadwal->eskul_id)
+            ->where('status', 'aktif')
+            ->exists();
+
+        if (!$anggota) {
+            return back()->with('error', 'Anda bukan anggota ekskul ini');
+        }
+
+
+        // 3 Ambil siswa
+        $siswa = Siswa::where('user_id', Auth::id())->firstOrFail();
+
+        // Cek double absen
+        $sudahAbsen = AbsensiEskul::where('sesi_absensi_id', $sesi->id)
+            ->where('siswa_id', $siswa->id)
+            ->exists();
+
+        if ($sudahAbsen) {
+            return back()->with('error', 'Anda sudah absen');
+        }
+
+        // 4 Hitung jarak
         $jarak = GeoHelper::distanceMeter(
-            $request->latitude,
-            $request->longitude,
             $jadwal->latitude,
-            $jadwal->longitude
+            $jadwal->longitude,
+            $request->latitude,
+            $request->longitude
         );
 
         if ($jarak > $jadwal->radius_meter) {
             return back()->with('error', 'Di luar radius absensi');
         }
 
-        // 4️⃣ Simpan absensi
+        // 5 Simpan absensi
         AbsensiEskul::create([
             'sesi_absensi_id' => $sesi->id,
-            'siswa_id'        => $siswa->id,
-            'status'          => 'hadir',
+            'siswa_id' => $siswa->id,
+            'status' => 'hadir',
         ]);
 
-        // 5️⃣ HAPUS TOKEN (ANTI TITIP)
-        $qr->delete();
-
+        // 6 HAPUS TOKEN (ANTI TITIP)
         return back()->with('success', 'Absensi berhasil');
+
     }
 }

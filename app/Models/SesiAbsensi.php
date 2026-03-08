@@ -25,7 +25,7 @@ class SesiAbsensi extends Model
         'status',
     ];
 
-    public function jadwal()
+    public function Jadwal()
     {
         return $this->belongsTo(JadwalEskul::class, 'jadwal_eskul_id');
     }
@@ -39,5 +39,6 @@ class SesiAbsensi extends Model
     {
         return $this->hasMany(QrTokenAbsensi::class, 'sesi_absensi_id');
     }
+    
 }
         

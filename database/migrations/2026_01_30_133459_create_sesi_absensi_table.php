@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->uuid('jadwal_eskul_id');
             $table->dateTime('mulai_absen');
-            $table->dateTime('selesai_absen');
-            $table->decimal('opened_lat', 10, 7);
-            $table->decimal('opened_lng', 10, 7);
+            $table->dateTime('selesai_absen')->nullable();
+            $table->decimal('opened_lat', 10, 7)->nullable();
+            $table->decimal('opened_lng', 10, 7)->nullable();
             $table->foreignId('dibuka_oleh')->constrained('users');
             $table->enum('status', ['aktif', 'selesai'])->default('aktif');
             $table->timestamps();

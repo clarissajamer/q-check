@@ -14,6 +14,19 @@ class SesiAbsensiController extends Controller
 {
     public function buka(JadwalEskul $jadwal)
     {
+        $sekarang = Carbon::now();
+
+        $mulai   = Carbon::parse($jadwal->tanggal . ' ' . $jadwal->jam_mulai);
+        $selesai = Carbon::parse($jadwal->tanggal . ' ' . $jadwal->jam_selesai);
+
+        if ($sekarang->lt($mulai)) {
+            return back()->with('error', 'Absensi belum bisa dibuka');
+        }
+
+        if ($sekarang->gt($selesai)) {
+            return back()->with('error', 'Waktu absensi sudah selesai');
+        }
+
         if ($jadwal->sesiAbsensi()->where('status', 'aktif')->exists()) {
             return back()->with('error', 'Sesi absensi masih aktif');
         }
@@ -21,6 +34,8 @@ class SesiAbsensiController extends Controller
         $sesi = SesiAbsensi::create([
             'jadwal_eskul_id' => $jadwal->id,
             'mulai_absen'     => now(),
+            'opened_lat'      => $jadwal->latitude,
+            'opened_lng'      => $jadwal->longitude,
             'dibuka_oleh'     => Auth::id(),
             'status'          => 'aktif',
         ]);
@@ -40,7 +55,7 @@ class SesiAbsensiController extends Controller
 
         $token = $sesi->qrToken()->latest()->first();
 
-        if ($token && Carbon::now()->greaterThan($token->expired_at)) {
+        if (!$token || Carbon::now()->greaterThan($token->expired_at)) {
              $token = QrTokenAbsensi::create([
                 'sesi_absensi_id' => $sesi->id,
                 'token'           => Str::random(40),

@@ -7,16 +7,29 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class AbsensiEskul extends Model
 {
-    use HasUuids; // Karena tabel kamu pakai UUID
+    use HasUuids;
 
     protected $table = 'absensi_eskul';
 
-    // WAJIB: Tambahkan 'waktu_scan' ke daftar ini agar tidak diblokir Laravel
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'id',
         'sesi_absensi_id',
         'siswa_id',
         'status',
-        'waktu_scan', 
+        'sumber',
+        'waktu_scan',
     ];
+
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'siswa_id');
+    }
+
+    public function sesiAbsensi()
+    {
+        return $this->belongsTo(SesiAbsensi::class, 'sesi_absensi_id');
+    }
 }

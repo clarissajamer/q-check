@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\User;
 use App\Models\QrTokenAbsensi;
 use App\Models\AbsensiEskul;
 use App\Models\SesiAbsensi;
@@ -43,11 +42,11 @@ class SiswaDashboardController extends Controller
         ];
 
         // 2. Rekap Kehadiran
-        // Menggunakan relasi 'absensis' yang baru ditambahkan di model Siswa
+        // Menggunakan relasi 'absensiEskul' yang baru ditambahkan di model Siswa
         $rekapKehadiran = [
-            'hadir' => $siswa->absensis()->where('status', 'hadir')->count(),
-            'izin'  => $siswa->absensis()->whereIn('status', ['izin', 'sakit'])->count(), // Asumsi izin/sakit masuk kategori izin
-            'alfa'  => $siswa->absensis()->where('status', 'alfa')->count(),
+            'hadir' => $siswa->absensiEskul()->where('status', 'hadir')->count(),
+            'izin'  => $siswa->absensiEskul()->whereIn('status', ['izin', 'sakit'])->count(), // Asumsi izin/sakit masuk kategori izin
+            'alfa'  => $siswa->absensiEskul()->where('status', 'alfa')->count(),
         ];
 
         // 3. Daftar Eskul yang diikuti

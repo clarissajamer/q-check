@@ -11,21 +11,20 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('jadwal_eskul', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('eskul_id');
-            $table->date('tanggal');
-            $table->time('jam_mulai');
-            $table->time('jam_selesai');
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
-            $table->integer('radius_meter')->default(50);
-            $table->enum('status', ['aktif', 'dibatalkan']);
-            $table->unsignedBigInteger('created_by');
-            $table->timestamps();
-            $table->foreign('eskul_id')->references('id')->on('eskul')->cascadeOnDelete();
-            $table->foreign('created_by')->references('id')->on('users')
-                ->restrictOnDelete();
-        });
+
+    $table->uuid('id')->primary();
+    $table->uuid('eskul_id');
+    $table->date('tanggal');
+    $table->time('jam_mulai');
+    $table->time('jam_selesai');
+    $table->decimal('latitude',10,7)->nullable();
+    $table->decimal('longitude',10,7)->nullable();
+    $table->integer('radius_meter')->default(100);
+    $table->enum('status',['aktif','dibatalkan'])->default('aktif');
+    $table->foreignId('created_by')->constrained('users');
+    $table->timestamps();
+    $table->foreign('eskul_id')->references('id')->on('eskul')->cascadeOnDelete();
+});
 
 
     }

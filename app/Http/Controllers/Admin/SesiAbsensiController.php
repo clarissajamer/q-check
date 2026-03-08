@@ -14,12 +14,27 @@ class SesiAbsensiController extends Controller
 {
     public function buka(JadwalEskul $jadwal)
     {
-        // 1️⃣ Pastikan belum ada sesi aktif
-        if ($jadwal->sesiAbsensi()->where('status', 'aktif')->exists()) {
-            return back()->with('error', 'Sesi absensi masih aktif');
+        $sekarang = Carbon::now();
+
+        $mulai   = Carbon::parse($jadwal->jam_mulai);
+        $selesai = Carbon::parse($jadwal->jam_selesai);
+
+        // 1️⃣ cek jadwal belum mulai
+        if ($sekarang->lt($mulai)) {
+            return back()->with('error', 'Absensi belum bisa dibuka.');
         }
 
-        // 2️⃣ Buat sesi absensi
+        // 2️⃣ cek jadwal sudah selesai
+        if ($sekarang->gt($selesai)) {
+            return back()->with('error', 'Waktu absensi sudah lewat.');
+        }
+
+        // 3️⃣ pastikan tidak ada sesi aktif
+        if ($jadwal->sesiAbsensi()->where('status', 'aktif')->exists()) {
+            return back()->with('error', 'Sesi absensi masih aktif.');
+        }
+
+        // 4️⃣ buat sesi absensi
         $sesi = SesiAbsensi::create([
             'jadwal_eskul_id' => $jadwal->id,
             'mulai_absen'     => now(),
@@ -27,14 +42,14 @@ class SesiAbsensiController extends Controller
             'status'          => 'aktif',
         ]);
 
+        // 5️⃣ buat QR token pertama
         QrTokenAbsensi::create([
             'sesi_absensi_id' => $sesi->id,
             'token'           => Str::random(40),
-            'expired_at'      => Carbon::now()->addMinutes(2), 
+            'expired_at'      => Carbon::now()->addMinutes(2),
         ]);
 
-        return redirect()
-            ->route('admin.sesi-absensi.qr', $sesi->id);
+        return redirect()->route('admin.sesi-absensi.qr', $sesi->id);
     }
 
     public function qr(SesiAbsensi $sesi)
@@ -47,7 +62,7 @@ class SesiAbsensiController extends Controller
     public function tutup(SesiAbsensi $sesi)
     {
         $sesi->update([
-            'status' => 'selesai',
+            'status'        => 'selesai',
             'selesai_absen' => now(),
         ]);
 

@@ -11,12 +11,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('qr_token_absensi', function (Blueprint $table) {
+
             $table->uuid('id')->primary();
             $table->uuid('sesi_absensi_id');
             $table->string('token');
             $table->timestamp('expired_at');
             $table->timestamps();
-
             $table->foreign('sesi_absensi_id')->references('id')->on('sesi_absensi')->cascadeOnDelete();
         });
 

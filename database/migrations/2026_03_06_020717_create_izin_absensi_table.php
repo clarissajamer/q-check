@@ -10,37 +10,34 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('absensi_eskul', function (Blueprint $table) {
-
+        Schema::create('izin_absensi', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->uuid('sesi_absensi_id');
             $table->uuid('siswa_id');
+            $table->uuid('sesi_absensi_id');
+
+            $table->enum('jenis_izin', ['izin', 'sakit']);
+            $table->text('alasan')->nullable();
+            $table->string('bukti_file')->nullable();
 
             $table->enum('status', [
-                'hadir',
-                'izin',
-                'sakit',
-                'alpha'
-            ]);
+                'pending',
+                'disetujui',
+                'ditolak'
+            ])->default('pending');
 
-            $table->timestamp('waktu_scan')->nullable();
+            $table->timestamp('tanggal_pengajuan');
 
             $table->timestamps();
-
-            $table->unique([
-                'sesi_absensi_id',
-                'siswa_id'
-            ]);
-
-            $table->foreign('sesi_absensi_id')
-                ->references('id')
-                ->on('sesi_absensi')
-                ->cascadeOnDelete();
 
             $table->foreign('siswa_id')
                 ->references('id')
                 ->on('siswa')
+                ->cascadeOnDelete();
+
+            $table->foreign('sesi_absensi_id')
+                ->references('id')
+                ->on('sesi_absensi')
                 ->cascadeOnDelete();
         });
     }
@@ -50,6 +47,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('absensi_eskul');
+        Schema::dropIfExists('izin_absensi');
     }
 };

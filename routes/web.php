@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SesiAbsensiController;
 use App\Http\Controllers\Admin\KategoriEskulController;
 use App\Http\Controllers\Admin\TahunAjaranController;
 use App\Http\Controllers\Siswa\AbsensiController;
+use App\Http\Controllers\Siswa\SiswaDashboardController;
 // Imports for Guru Controllers
 use App\Http\Controllers\Guru\JadwalEskulController as GuruJadwalController;
 use App\Http\Controllers\Guru\SesiAbsensiController as GuruSesiController;

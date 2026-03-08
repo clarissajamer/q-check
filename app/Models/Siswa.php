@@ -11,7 +11,9 @@ class Siswa extends Model
 
     protected $table = 'siswa';
 
-    // Gunakan $fillable saja untuk keamanan, hapus $guarded = [] agar tidak konflik
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'user_id',
         'nama',
@@ -34,16 +36,26 @@ class Siswa extends Model
         return $this->hasMany(AnggotaEskul::class, 'siswa_id');
     }
 
-    public function absensi()
+    public function absensiEskul()
     {
         return $this->hasMany(AbsensiEskul::class, 'siswa_id');
     }
 
-    // Ini relasi Many-to-Many yang BENAR menuju tabel anggota_eskul
+    public function izinAbsensi()
+    {
+        return $this->hasMany(IzinAbsensi::class, 'siswa_id');
+    }
+
     public function eskul()
     {
-        return $this->belongsToMany(Eskul::class, 'anggota_eskul', 'siswa_id', 'eskul_id')
-                    ->withPivot('id', 'tahun_ajaran_id', 'status')
-                    ->withTimestamps();
+        return $this->belongsToMany(
+            Eskul::class,
+            'anggota_eskul',
+            'siswa_id',
+            'eskul_id'
+        )
+        ->wherePivot('status', 'aktif')
+        ->withPivot('id', 'tahun_ajaran_id', 'status')
+        ->withTimestamps();
     }
 }
